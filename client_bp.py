@@ -34,8 +34,7 @@ def login():
                 "expires":  date
                 },
                 current_app.config["SECRET_KEY"],
-                algorithm = "HS256",
-                options={"verify_signature": False})
+                algorithm = "HS256")
             result = client_schema.dump(user)
             
             # 將照片解析後放回
@@ -98,7 +97,7 @@ def generate_token(public_id):
         "public_id": public_id,
         "expires":  date
     }    
-    token = jwt.encode(payload, current_app.config['SECRET_KEY'], algorithm='HS256', options={"verify_signature": False})
+    token = jwt.encode(payload, current_app.config['SECRET_KEY'], algorithm='HS256')
     return token
 
 # Token 時效快過期，發送新的 Token
@@ -108,7 +107,7 @@ def refresh_token():
     token = request.get_json().get('token')
     try:
         # 解碼過期的 Token，取得 public_id 或其他信息
-        decoded_token = jwt.decode(token['token'], current_app.config['SECRET_KEY'], algorithms=['HS256'], options={"verify_signature": False})
+        decoded_token = jwt.decode(token['token'], current_app.config['SECRET_KEY'], algorithms=['HS256'])
         public_id = decoded_token.get('public_id')
         user = Client.query.filter_by(public_id = public_id).first()
 

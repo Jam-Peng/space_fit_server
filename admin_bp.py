@@ -47,7 +47,7 @@ def generate_token(public_id):
         "public_id": public_id,
         "expires":  date
     }    
-    token = jwt.encode(payload, current_app.config['SECRET_KEY'], algorithm='HS256', options={"verify_signature": False})
+    token = jwt.encode(payload, current_app.config['SECRET_KEY'], algorithm='HS256')
     return token
 
 # Token 時效快過期，發送新的 Token
@@ -57,10 +57,13 @@ def refresh_token():
     token = request.get_json().get('token')
     try:
         # 解碼過期的 Token，取得 public_id 或其他信息
-        decoded_token = jwt.decode(token['token'], current_app.config['SECRET_KEY'], algorithms=['HS256'], options={"verify_signature": False})
+        decoded_token = jwt.decode(token['token'], current_app.config['SECRET_KEY'], algorithms=['HS256'])
         public_id = decoded_token.get('public_id')
         user = Admin.query.filter_by(public_id = public_id).first()
 
+        if not user:
+            return jsonify({"message": "無效的 Token 或用戶不存在"}), 401
+    
         # 重新取得新的 Token
         new_token = generate_token(public_id)
         return jsonify({
@@ -80,7 +83,7 @@ def refresh_token():
 # 更新管理者帳號、密碼 - 解析 Token 的函數
 def decode_token(token):
     try:
-        decoded_token = jwt.decode(token, current_app.config['SECRET_KEY'], algorithms=['HS256'], options={"verify_signature": False})
+        decoded_token = jwt.decode(token, current_app.config['SECRET_KEY'], algorithms=['HS256'])
         return decoded_token
     except jwt.ExpiredSignatureError:
         return None
@@ -92,7 +95,7 @@ def decode_token(token):
 @jwt_required
 def update_admin(current_user):
     try:
-        if not current_user:                      # 不用判斷登入的使用者是否為最大權限的管理者 - 任何管理者都可以更改自己的帳密
+        if not current_user:   # 不用判斷登入的使用者是否為最大權限的管理者 - 任何管理者都可以更改自己的帳密
             return jsonify({'message':'權限不足'})
         
         username = request.json.get('username')

@@ -10,11 +10,11 @@ from order_bp import order_bp
 from echart_bp import echart_bp
 
 load_dotenv()
-SECRET_KEY = os.getenv('SECRET_KEY')
-HOST = os.getenv('HOST')
-DB_USER = os.getenv('DB_USER')
-DB_PWD = os.getenv('DB_PWD')
-DB_NAME = os.getenv('DB_NAME')
+SECRET_KEY = 'ce217c7c71f54dd2bcb17cce29f72e11'
+HOST = 'database-1.ccftqa8uxqsd.us-east-1.rds.amazonaws.com'
+DB_USER = 'pengroot'
+DB_PWD = '11111111'
+DB_NAME = 'fitness'
 
 app = Flask(__name__)
 # CORS(app, resources={r"/api/*": {"origins": "http://127.0.0.1:5173"}})

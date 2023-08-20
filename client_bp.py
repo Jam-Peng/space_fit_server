@@ -333,10 +333,10 @@ def retrieveClients(current_user):
 
 # 確定刪除資料表中的會員資料
 @client_bp.route('/api/deleteDataClient/<public_id>', methods=['DELETE'])
-@jwt_required
-def deleteDataClient(current_user, public_id):
-    if not current_user:
-        return jsonify({'message': '沒有使用權限'}), 401
+# @jwt_required
+def deleteDataClient( public_id):
+    # if not current_user:
+    #     return jsonify({'message': '沒有使用權限'}), 401
     
     try:
         client = Client.query.filter_by(public_id = public_id).first()

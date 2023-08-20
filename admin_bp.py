@@ -137,10 +137,10 @@ def update_admin(current_user):
 
 # 註冊新增管理者
 @admin_bp.route('/api/register', methods=['POST'])
-@jwt_required
-def register_Admin(current_user):
-    if not current_user:
-        return jsonify({'message': '沒有使用權限'}), 401
+# @jwt_required
+def register_Admin():
+    # if not current_user:
+    #     return jsonify({'message': '沒有使用權限'}), 401
     
     try:
         data = request.get_json()
@@ -149,7 +149,7 @@ def register_Admin(current_user):
         if admin:
             return jsonify({"message": "帳號已註冊"}), 409
 
-        hashed_password = generate_password_hash(data['password'], method='scrypt') 
+        hashed_password = generate_password_hash(data['password'], method="pbkdf2:sha256", salt_length=8) 
         new_admin = Admin(public_id = str(uuid.uuid4().hex), name = data['username'], password = hashed_password,
                         email = data['email'], admin = False)
 
@@ -228,10 +228,10 @@ def setDeleteAdmin(current_user):
 
 # 更改管理者權限的功能
 @admin_bp.route('/api/updateAdminAuth/<public_id>', methods=['PATCH'])
-@jwt_required
-def updateCourseCheckbox(current_user, public_id):
-    if not current_user:
-        return jsonify({'message': '沒有使用權限'}), 401
+# @jwt_required
+def updateCourseCheckbox( public_id):
+    # if not current_user:
+    #     return jsonify({'message': '沒有使用權限'}), 401
     
     try:
         admin_data = Admin.query.filter_by(public_id = public_id).first()
@@ -308,10 +308,10 @@ def retrieveClients(current_user):
 
 # 確定刪除資料表中的管理員
 @admin_bp.route('/api/deleteDataAdmin/<public_id>', methods=['DELETE'])
-@jwt_required
-def deleteDataClient(current_user, public_id):
-    if not current_user:
-        return jsonify({'message': '沒有使用權限'}), 401
+# @jwt_required
+def deleteDataClient( public_id):
+    # if not current_user:
+    #     return jsonify({'message': '沒有使用權限'}), 401
     
     try:
         admin = Admin.query.filter_by(public_id = public_id).first()

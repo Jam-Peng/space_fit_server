@@ -1,7 +1,6 @@
 from flask import Blueprint
 from flask import request, jsonify
-from decorators import jwt_required
-from model import db, Client, ClientOrder, client_schema, client_order_schema, clients_order_schema
+from model import ClientOrder
 from datetime import datetime
 
 echart_bp = Blueprint('echart_bp', __name__)
@@ -22,12 +21,7 @@ def payload_datas():
                 
                 # 初始化課程類別的統計數據
                 if category not in course_stats:
-                    # course_stats[category] = {'count': 0, 'total_price': 0}   (沒有取出每個類別的課程)
                     course_stats[category] = {'count': 0, 'total_price': 0, 'courses': {}}
-                
-                # 更新統計數據 (沒有取出每個類別的課程)
-                # course_stats[category]['count'] += 1
-                # course_stats[category]['total_price'] += price
 
                 # 更新課程數據
                 if course.course_title not in course_stats[category]['courses']:
@@ -48,39 +42,6 @@ def payload_datas():
     except Exception as e:
         print(e)
         return jsonify({"message": "獲取訂單統計數據失敗"}), 500
-    
-
-# 取得當前日期所有訂單分類的購買次數、價錢資料 - 這條 API 棄用，改用下面有統計每個類別的課程
-# @echart_bp.route('/api/current_orders', methods=['GET'])
-# def current_data():
-#     try:
-#         current_date = datetime.now().date()  # 當日的日期（不包含時間部分）
-        
-#         # 查詢當日的訂單，並取得相關的課程資料
-#         orders = ClientOrder.query.filter(ClientOrder.create_date >= current_date).all()
-#         course_stats = {}  # 用於儲存課程統計數據
-        
-#         for order in orders:
-#             for course in order.current_course:
-#                 category = course.course_category
-#                 price = course.course_price
-                
-#                 # 初始化課程類別的統計數據
-#                 if category not in course_stats:
-#                     course_stats[category] = {'count': 0, 'total_price': 0}
-                
-#                 # 更新統計數據
-#                 course_stats[category]['count'] += 1
-#                 course_stats[category]['total_price'] += price
-        
-#         return jsonify({
-#             'date': current_date.strftime('%Y-%m-%d'),  # 將日期格式化為字符串
-#             'course_statistics': course_stats
-#         }), 200
-    
-#     except Exception as e:
-#         print(e)
-#         return jsonify({"message": "獲取課程統計數據失敗"}), 500
     
 
 # 取得 "當前日期" 所有訂單分類的購買次數、價錢資料 (細分所有課程)
@@ -120,8 +81,6 @@ def get_current_data():
     except Exception as e:
         print(e)
         return jsonify({"message": "獲取課程統計數據失敗"}), 500
-
-
 
 
 # 根據查詢日期取得當天所有訂單分類的購買次數、價錢資料 (前端api `/api/search_date_orders?date=${dateParam}`)
@@ -204,7 +163,3 @@ def search_date_alldata():
     except Exception as e:
         print(e)
         return jsonify({"message": "獲取課程統計數據失敗"}), 500
-
-
-# ============================================
-

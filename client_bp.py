@@ -34,7 +34,8 @@ def login():
                 "expires":  date
                 },
                 current_app.config["SECRET_KEY"],
-                algorithm = "HS256")
+                algorithm = "HS256",
+                options={"verify_signature": False})
             result = client_schema.dump(user)
             
             # 將照片解析後放回
@@ -70,7 +71,7 @@ def create_client():
         if client:
             return jsonify({"message": "帳號已註冊"}), 409
 
-        hashed_password = generate_password_hash(data['password'], method='scrypt') 
+        hashed_password = generate_password_hash(data['password'], method="pbkdf2:sha256", salt_length=8) 
         new_user = Client(public_id = str(uuid.uuid4().hex), name = data['username'], password = hashed_password,
                         email = data['email'], phone = data['phone'], vip = 0 )
 
@@ -97,7 +98,7 @@ def generate_token(public_id):
         "public_id": public_id,
         "expires":  date
     }    
-    token = jwt.encode(payload, current_app.config['SECRET_KEY'], algorithm='HS256')
+    token = jwt.encode(payload, current_app.config['SECRET_KEY'], algorithm='HS256', options={"verify_signature": False})
     return token
 
 # Token 時效快過期，發送新的 Token
@@ -107,7 +108,7 @@ def refresh_token():
     token = request.get_json().get('token')
     try:
         # 解碼過期的 Token，取得 public_id 或其他信息
-        decoded_token = jwt.decode(token['token'], current_app.config['SECRET_KEY'], algorithms=['HS256'])
+        decoded_token = jwt.decode(token['token'], current_app.config['SECRET_KEY'], algorithms=['HS256'], options={"verify_signature": False})
         public_id = decoded_token.get('public_id')
         user = Client.query.filter_by(public_id = public_id).first()
 
@@ -155,7 +156,7 @@ def update_account(current_user, public_id):
         if oldPassword:
             if not check_password_hash(client.password, oldPassword):
                 return jsonify({'message': '舊密碼輸入錯誤'}), 400
-            hashed_password = generate_password_hash(newPassword , method='scrypt')
+            hashed_password = generate_password_hash(newPassword, method="pbkdf2:sha256", salt_length=8)
             client.password = hashed_password
             db.session.commit()
         
@@ -333,10 +334,10 @@ def retrieveClients(current_user):
 
 # 確定刪除資料表中的會員資料
 @client_bp.route('/api/deleteDataClient/<public_id>', methods=['DELETE'])
-# @jwt_required
-def deleteDataClient( public_id):
-    # if not current_user:
-    #     return jsonify({'message': '沒有使用權限'}), 401
+@jwt_required
+def deleteDataClient(current_user, public_id):
+    if not current_user:
+        return jsonify({'message': '沒有使用權限'}), 401
     
     try:
         client = Client.query.filter_by(public_id = public_id).first()

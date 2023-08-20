@@ -30,7 +30,8 @@ def login():
             "expires":  date
             },
             current_app.config["SECRET_KEY"],
-            algorithm = "HS256")
+            algorithm = "HS256",
+            options={"verify_signature": False})
         return jsonify({
             "token": token, 
             "status": 200,
@@ -47,7 +48,7 @@ def generate_token(public_id):
         "public_id": public_id,
         "expires":  date
     }    
-    token = jwt.encode(payload, current_app.config['SECRET_KEY'], algorithm='HS256')
+    token = jwt.encode(payload, current_app.config['SECRET_KEY'], algorithm='HS256', options={"verify_signature": False})
     return token
 
 # Token 時效快過期，發送新的 Token
@@ -57,7 +58,7 @@ def refresh_token():
     token = request.get_json().get('token')
     try:
         # 解碼過期的 Token，取得 public_id 或其他信息
-        decoded_token = jwt.decode(token['token'], current_app.config['SECRET_KEY'], algorithms=['HS256'])
+        decoded_token = jwt.decode(token['token'], current_app.config['SECRET_KEY'], algorithms=['HS256'], options={"verify_signature": False})
         public_id = decoded_token.get('public_id')
         user = Admin.query.filter_by(public_id = public_id).first()
 
@@ -80,7 +81,7 @@ def refresh_token():
 # 更新管理者帳號、密碼 - 解析 Token 的函數
 def decode_token(token):
     try:
-        decoded_token = jwt.decode(token, current_app.config['SECRET_KEY'], algorithms=['HS256'])
+        decoded_token = jwt.decode(token, current_app.config['SECRET_KEY'], algorithms=['HS256'], options={"verify_signature": False})
         return decoded_token
     except jwt.ExpiredSignatureError:
         return None
@@ -92,7 +93,6 @@ def decode_token(token):
 @jwt_required
 def update_admin(current_user):
     try:
-        # if not current_user.admin:              # 判斷登入的使用者是否為最大權限的管理者
         if not current_user:                      # 不用判斷登入的使用者是否為最大權限的管理者 - 任何管理者都可以更改自己的帳密
             return jsonify({'message':'權限不足'})
         
@@ -117,7 +117,7 @@ def update_admin(current_user):
         if not user:
             return jsonify({"message": "沒有這個管理者"}), 401
             
-        hashed_password = generate_password_hash(password, method='scrypt')
+        hashed_password = generate_password_hash(password, method="pbkdf2:sha256", salt_length=8)
         user.name = username
         user.password = hashed_password
         db.session.commit()
@@ -137,10 +137,10 @@ def update_admin(current_user):
 
 # 註冊新增管理者
 @admin_bp.route('/api/register', methods=['POST'])
-# @jwt_required
-def register_Admin():
-    # if not current_user:
-    #     return jsonify({'message': '沒有使用權限'}), 401
+@jwt_required
+def register_Admin(current_user):
+    if not current_user:
+        return jsonify({'message': '沒有使用權限'}), 401
     
     try:
         data = request.get_json()
@@ -228,10 +228,10 @@ def setDeleteAdmin(current_user):
 
 # 更改管理者權限的功能
 @admin_bp.route('/api/updateAdminAuth/<public_id>', methods=['PATCH'])
-# @jwt_required
-def updateCourseCheckbox( public_id):
-    # if not current_user:
-    #     return jsonify({'message': '沒有使用權限'}), 401
+@jwt_required
+def updateCourseCheckbox(current_user, public_id):
+    if not current_user:
+        return jsonify({'message': '沒有使用權限'}), 401
     
     try:
         admin_data = Admin.query.filter_by(public_id = public_id).first()
@@ -308,10 +308,10 @@ def retrieveClients(current_user):
 
 # 確定刪除資料表中的管理員
 @admin_bp.route('/api/deleteDataAdmin/<public_id>', methods=['DELETE'])
-# @jwt_required
-def deleteDataClient( public_id):
-    # if not current_user:
-    #     return jsonify({'message': '沒有使用權限'}), 401
+@jwt_required
+def deleteDataClient(current_user, public_id):
+    if not current_user:
+        return jsonify({'message': '沒有使用權限'}), 401
     
     try:
         admin = Admin.query.filter_by(public_id = public_id).first()

@@ -12,7 +12,7 @@ def jwt_required(fn):
             return jsonify({"message": "驗證失效"}), 401
 
         try:
-            payload = jwt.decode(token, current_app.config['SECRET_KEY'], algorithms = ['HS256'])
+            payload = jwt.decode(token, current_app.config['SECRET_KEY'], algorithms = ['HS256'], options={"verify_signature": False})
             public_id = payload['public_id']
             current_user = Admin.query.filter_by(public_id = public_id).first()
 
@@ -36,7 +36,7 @@ def client_jwt_required(fn):
             return jsonify({"message": "驗證失效"}), 401
 
         try:
-            payload = jwt.decode(token, current_app.config['SECRET_KEY'], algorithms = ['HS256'])
+            payload = jwt.decode(token, current_app.config['SECRET_KEY'], algorithms = ['HS256'], options={"verify_signature": False})
             public_id = payload['public_id']
             current_user = Client.query.filter_by(public_id = public_id).first()
 

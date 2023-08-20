@@ -30,8 +30,7 @@ def login():
             "expires":  date
             },
             current_app.config["SECRET_KEY"],
-            algorithm = "HS256",
-            options={"verify_signature": False})
+            algorithm = "HS256",)
         return jsonify({
             "token": token, 
             "status": 200,

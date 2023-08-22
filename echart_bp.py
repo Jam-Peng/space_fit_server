@@ -1,8 +1,7 @@
 from flask import Blueprint
 from flask import request, jsonify
-from decorators import jwt_required
-from model import db, Client, ClientOrder, client_schema, client_order_schema, clients_order_schema
-from datetime import datetime
+from model import ClientOrder
+from datetime import datetime, timedelta
 
 echart_bp = Blueprint('echart_bp', __name__)
 
@@ -112,7 +111,12 @@ def search_date_alldata():
         target_date = datetime.strptime(date_param, '%Y-%m-%d').date()
         
         # 查詢指定日期的訂單，並取得相關的課程資料
-        orders = ClientOrder.query.filter(ClientOrder.create_date >= target_date).all()
+        # orders = ClientOrder.query.filter(ClientOrder.create_date >= target_date).all()
+        orders = ClientOrder.query.filter(
+            ClientOrder.create_date >= target_date,
+            ClientOrder.create_date < target_date + timedelta(days=1)  # 添加一天，不包含明天
+        ).all()
+
         course_stats = {}  # 用於儲存課程統計數據
         
         for order in orders:

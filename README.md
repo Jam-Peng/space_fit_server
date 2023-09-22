@@ -9,7 +9,7 @@
 前台 --> https://github.com/Jam-Peng/space_fit_frontend <br>
 後台 --> https://github.com/Jam-Peng/space_fit_backend
 
->⚠ 由於將資料庫部署 Aws 選擇較低的 CPU 配置，影響應用程序與數據庫查詢的時間增加，從而降低網頁加載速度。
+>⚠ 由於將資料庫部署 Aws 選擇較低的 CPU 配置，影響應用程序與數據庫查詢的時間增加，降低網頁加載速度。
 
 ###  Preview :
 
@@ -29,7 +29,7 @@
   Backend - Course manage
 </p>
 <center>
-<img src="./public/backend_course_manage.jpg" height='126px'>
+<img src="./public/backend_course_manage.jpg">
 </td>
 </tr>
 </table>
@@ -40,7 +40,7 @@
 - 模擬健身中心售課網站與後台管理系統。
 - 透過 Flask API 將將前、後端做資料的整合與應用。
 - 部署資料庫於 aws-RDS，
-- <a href="https://drive.google.com/file/d/1ouSLLthYRuK4FpqqMMT-b_NHTJucPT5O/view?usp=sharing" download>開啟線上完整專案指南</a>
+- <a href="https://drive.google.com/file/d/1ouSLLthYRuK4FpqqMMT-b_NHTJucPT5O/view?usp=sharing" target="_blank">開啟線上完整專案指南</a>
 
 #
 ### 使用環境

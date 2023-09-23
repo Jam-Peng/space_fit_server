@@ -53,16 +53,18 @@
 - 使用 `Marshmallow` 和 `SQLAlchemy` 一起使用，用於資料模型的序列化和反序列化，以便在 Web 應用程序中進行數據的轉換。允許將 Python 資料轉換為 JSON 或其他數據格式，並將接收到的客户端資料反序列化為資料庫模型。
 
 ### 使用套件
-- `flask`
-- `flask_sqlalchemy`
-- `flask_marshmallow`
-- `decorators`
-- `werkzeug.security`
+- `flask` -- `Flask`、`request`、`jsonify`、`current_app`、`Blueprint`
+- `flask_sqlalchemy` -- `SQLAlchemy`
+- `flask_marshmallow` -- `Marshmallow`
+- `functools` -- `wraps`
+- `werkzeug.security` -- `generate_password_hash`、`check_password_hash`
+- `werkzeug.utils` -- `secure_filename`
 - `jwt`
+- `os`
 - `base64`
 - `uuid`
-- `datetime`
-- `flask_cors`
+- `datetime` -- `datetime`、`timedelta`
+- `flask_cors` -- `CORS`
 
 
 ## 如何執行 - `前、後台`

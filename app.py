@@ -11,7 +11,8 @@ from echart_bp import echart_bp
 
 load_dotenv()
 SECRET_KEY = 'ce217c7c71f54dd2bcb17cce29f72e11'
-HOST = 'database-1.ccftqa8uxqsd.us-east-1.rds.amazonaws.com'
+# HOST = 'database-1.ccftqa8uxqsd.us-east-1.rds.amazonaws.com'
+HOST = '127.0.0.1'
 DB_USER = 'pengroot'
 DB_PWD = '11111111'
 DB_NAME = 'fitness'
@@ -41,5 +42,5 @@ with app.app_context():
     db.create_all()
 
 
-if __name__=='__main__':
+if __name__ == '__main__':
     app.run(debug=True)

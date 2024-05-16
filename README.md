@@ -40,7 +40,7 @@
 - 模擬健身中心售課網站與後台管理系統。
 - 透過 Flask API 將將前、後端做資料的整合與應用。
 - 部署資料庫於 aws-RDS，
-- <a href="https://drive.google.com/file/d/1ouSLLthYRuK4FpqqMMT-b_NHTJucPT5O/view?usp=sharing" target="_blank">開啟線上完整專案指南</a>
+- <a href="https://drive.google.com/file/d/13Z1jdBGDP95JCOCd2z3zKP7JwtV1Wgn5/view?usp=sharing" target="_blank">開啟線上完整專案指南</a>
 
 #
 ### 使用環境
